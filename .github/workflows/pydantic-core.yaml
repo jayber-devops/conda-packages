@@ -1,0 +1,44 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+  IS_DEFAULT_BRANCH: ${{ github.ref_name == github.event.repository.default_branch }}
+  CONDA_INDEX_HTTP_URL: http://geosaurus.esri.com/conda
+  CONDA_INDEX_ROOT_PATH: \\geosaurus.esri.com\Public\conda
+  CONDA_MAIN_INDEX: v3
+  CONDA_ONDEMAND_INDEX: ondemand
+  PYPI_HTTP_URL: http://geosaurus.esri.com/pypi
+  PYPI_ROOT_PATH: \\geosaurus.esri.com\Public\pypi
+  PYPI_ONDEMAND_SUBDIR: ondemand
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+         os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: 3.11
+    - name: Install and configure conda-build
+      run: |
+        conda install conda-build conda-verify python=3.11 -y
+        # output .conda packages
+        conda config --set conda_build.pkg_format 2
+    - name: Build
+      run: |
+        conda build pydantic-core --output-folder ./output
+    - name: List outputs
+      run: |
+        ls -R ./output
+    - uses: actions/upload-artifact@v2
+      with:
+        name: pydantic-core-${{ github.sha }}
+        path: output/**/*.conda
+        retention-days: 90
