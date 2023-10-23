@@ -36,8 +36,7 @@ jobs:
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
         curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.9.sdk.tar.xz
-        mkdir -p /opt
-        tar -xf MacOSX10.9.sdk.tar.xz -C /opt
+        tar -xf MacOSX10.9.sdk.tar.xz -C $GITHUB_WORKSPACE
     - name: Build
       run: |
         conda build pydantic-core --output-folder ./output
