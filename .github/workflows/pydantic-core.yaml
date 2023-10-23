@@ -1,4 +1,4 @@
-name: build
+name: build-pydantic-core
 
 on:
   workflow_dispatch:
@@ -32,6 +32,12 @@ jobs:
         conda install conda-build conda-verify python=3.11 -y
         # output .conda packages
         conda config --set conda_build.pkg_format 2
+    - name: Configure Mac SDK
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: |
+        curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.9.sdk.tar.xz
+        mkdir -p /opt
+        tar -xf MacOSX10.9.sdk.tar.xz -C /opt
     - name: Build
       run: |
         conda build pydantic-core --output-folder ./output
