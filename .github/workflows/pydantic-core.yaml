@@ -37,6 +37,7 @@ jobs:
       run: |
         curl -L -O https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.9.sdk.tar.xz
         tar -xf MacOSX10.9.sdk.tar.xz -C $GITHUB_WORKSPACE
+        echo "CONDA_BUILD_SYSROOT=$GITHUB_WORKSPACE/MacOSX10.9.sdk" >> $GITHUB_ENV
     - name: Build
       run: |
         conda build pydantic-core --output-folder ./output
