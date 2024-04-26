@@ -1,0 +1,42 @@
+{% set name = "psygnal" %}
+{% set version = "0.11.0" %}
+{% set sha256= "50731c7f9e4c52fc0a5e9c533c7a1bb528ce39cc4f4059fe433d3f76e1c46ca0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: {{ environ.get('BUILD_NUMBER', 0) }}
+  noarch: python
+  script: {{ PYTHON }} -m pip install --no-deps . -vv
+
+requirements:
+  host:
+    - pip
+    - python >=3.8
+    - hatchling >=1.8.0
+    - hatch-vcs
+  run:
+    - python >=3.8
+    - typing_extensions  # not actually required at runtime
+    - wrapt  # provides 'proxy' extra
+
+test:
+  imports:
+    - psygnal
+    - psygnal.containers
+    - psygnal.utils
+
+about:
+  home: https://github.com/tlambert03/psygnal
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: Pure python implementation of Qt Signals
+  doc_url: https://psygnal.readthedocs.io/en/latest/
+  dev_url: https://github.com/tlambert03/psygnal
