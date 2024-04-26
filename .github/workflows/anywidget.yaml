@@ -23,7 +23,7 @@ jobs:
         conda config --set conda_build.pkg_format 2
     - name: build
       run: |
-        conda build anywidget --output-folder ./output
+        conda build -c https://esri-forge.python.geocloud.com anywidget --output-folder ./output
     - name: List outputs
       run: |
         ls -R ./output
