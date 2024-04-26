@@ -1,0 +1,44 @@
+{% set name = "anywidget" %}
+{% set version = "0.9.9" %}
+{% set sha256 = "bece6d61c55a6f396409ebb5a76d260e8f4b221f9c51e516150737a35f1652ef" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/anywidget-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  noarch: python
+  script: {{ PYTHON }} -m pip install . -vv
+  number: 0
+
+requirements:
+  host:
+    - python >=3.10
+    - hatchling
+    - hatch-jupyter-builder
+    - jupyterlab
+    - pip
+  run:
+    - python >=3.7
+    - ipywidgets
+    - psygnal
+    - typing_extensions
+    - watchfiles
+
+test:
+  imports:
+    - anywidget
+
+about:
+  home: https://pypi.org/project/anywidget/
+  summary: simple, custom Jupyter widgets
+  description: |
+    anywidget is a Python library that greatly simplifies creating and publishing 
+    custom Jupyter Widgets.
+  license: MIT
+  license_file: LICENSE
+  dev_url: https://github.com/manzt/anywidget
