@@ -1,6 +1,6 @@
 {% set name = "anywidget" %}
-{% set version = "0.9.9" %}
-{% set sha256 = "bece6d61c55a6f396409ebb5a76d260e8f4b221f9c51e516150737a35f1652ef" %}
+{% set version = "0.9.10" %}
+{% set sha256 = "390a628240981c09813c7523279ddcab82ff4fd3287add5433b78b1369089068" %}
 
 package:
   name: {{ name|lower }}
