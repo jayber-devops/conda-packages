@@ -48,6 +48,8 @@ requirements:
 test:
   requires:
     - curio  # [unix]
+    - flaky
+    - ipyparallel
     - jupyter_client
     - numpy
     - pytest
