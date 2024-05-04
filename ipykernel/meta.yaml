@@ -40,7 +40,7 @@ requirements:
     - packaging
     - psutil
     - python >=3.7,<3.12
-    - pyzmq >=17
+    - pyzmq >=17,<25
     - tornado >=6.1
     - traitlets >=5.1.0
     - stack_data
