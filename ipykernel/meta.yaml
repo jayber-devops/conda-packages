@@ -37,7 +37,13 @@ requirements:
     {% endif %}
     - debugpy >=1.0
     - ipython >=7.23.1
+    {% if noarch_platform != "win" %}
     - jupyter_client >=7.3.5,<8
+    {% endif %}
+    {% if noarch_platform == "win" %}
+    # use esri jupyter_client on windows/arcgispro
+    - jupyter_client >=6.1.12
+    {% endif %}
     - nest-asyncio
     - packaging
     - psutil
