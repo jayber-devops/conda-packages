@@ -17,6 +17,11 @@ jobs:
               - windows-latest
               - macos-latest # Apple Silicon arm64
               - macos-13 # Intel x64
+            python-version:
+              - 3.10
+              - 3.11
+              - 3.12
+              - 3.13
     steps:
     - uses: actions/checkout@v4
     - uses: conda-incubator/setup-miniconda@v3
@@ -30,12 +35,12 @@ jobs:
         conda config --set conda_build.pkg_format 2
     - name: build
       run: |
-        conda build pydantic-core --output-folder ./output
+        conda build pydantic-core --python ${{ matrix.python-version }} --output-folder ./output
     - name: List outputs
       run: |
         ls -R ./output
     - uses: actions/upload-artifact@v4
       with:
-        name: pydantic-core-${{ matrix.os }}-${{ github.sha }}
+        name: pydantic-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.sha }}
         path: output/**/*.conda
         retention-days: 90
