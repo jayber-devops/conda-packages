@@ -38,7 +38,7 @@ jobs:
         conda config --set conda_build.pkg_format 2
     - name: build
       run: |
-        conda build pydantic-core --python ${{ matrix.python-version }} --output-folder ./output
+        conda deactivate && conda build pydantic-core --python ${{ matrix.python-version }} --output-folder ./output
     - name: List outputs
       run: |
         ls -R ./output
