@@ -1,27 +1,18 @@
 {% set name = "pydantic-core" %}
 {% set version = "2.27.2" %}
-{% set sha256 = "eb026e5a4c1fee05726072337ff51d1efb6f59090b7da90d30ea58625b1ffb39" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
-source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pydantic_core-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
-
 build:
   script:
-    - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
-    - export RUSTFLAGS="$CARGO_BUILD_RUSTFLAGS"   # [unix]
-    - set CARGO_PROFILE_RELEASE_STRIP=symbols     # [win]
-    - {{ PYTHON }} -m pip install . -vv
+    - {{ PYTHON }} -m pip install {{ name }}=={{ version }} --no-deps
   number: {{ environ.get('BUILD_NUMBER', 0) }}
 
 requirements:
   build:
-    - {{ compiler("c") }}
-    - {{ compiler("rust") }}
+    - python
   host:
     - maturin >=1,<2
     - pip
