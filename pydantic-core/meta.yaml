@@ -1,0 +1,44 @@
+{% set name = "pydantic-core" %}
+{% set version = "2.27.2" %}
+{% set sha256 = "eb026e5a4c1fee05726072337ff51d1efb6f59090b7da90d30ea58625b1ffb39" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/pydantic_core-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  script:
+    - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
+    - export RUSTFLAGS="$CARGO_BUILD_RUSTFLAGS"   # [unix]
+    - set CARGO_PROFILE_RELEASE_STRIP=symbols     # [win]
+    - {{ PYTHON }} -m pip install . -vv
+  number: {{ environ.get('BUILD_NUMBER', 0) }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - {{ compiler("rust") }}
+  host:
+    - maturin >=1,<2
+    - pip
+    - python
+    - typing-extensions >=4.6.0,!=4.7.0
+  run:
+    - python
+    - typing-extensions >=4.6.0,!=4.7.0
+
+test:
+  imports:
+    - pydantic_core
+
+about:
+  home: https://github.com/pydantic/pydantic-core
+  dev_url: https://github.com/pydantic/pydantic-core
+  summary: Core validation logic for pydantic written in rust
+  description: This package provides the core functionality for pydantic validation and serialization. Faster than pydantic v1.
+  license: MIT
+  license_file: LICENSE

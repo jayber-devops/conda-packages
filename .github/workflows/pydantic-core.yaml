@@ -1,0 +1,41 @@
+name: pydantic-core
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+        fail-fast: false
+        matrix:
+            os:
+              - ubuntu-latest
+              - windows-latest
+              - macos-latest # Apple Silicon arm64
+              - macos-13 # Intel x64
+    steps:
+    - uses: actions/checkout@v4
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+    - name: Setup
+      id: setup-build-environment
+      run: |
+        conda install conda-build conda-verify python=3.11 -y
+        # output .conda packages
+        conda config --set conda_build.pkg_format 2
+    - name: build
+      run: |
+        conda build pydantic-core --output-folder ./output
+    - name: List outputs
+      run: |
+        ls -R ./output
+    - uses: actions/upload-artifact@v4
+      with:
+        name: pydantic-core-${{ runner.os }}-${{ github.sha }}
+        path: output/**/*.conda
+        retention-days: 90
