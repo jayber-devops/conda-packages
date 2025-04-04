@@ -36,6 +36,6 @@ jobs:
         ls -R ./output
     - uses: actions/upload-artifact@v4
       with:
-        name: pydantic-core-${{ runner.os }}-${{ github.sha }}
+        name: pydantic-core-${{ matrix.os }}-${{ github.sha }}
         path: output/**/*.conda
         retention-days: 90
