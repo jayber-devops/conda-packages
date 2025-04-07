@@ -16,9 +16,6 @@ jobs:
         fail-fast: false
         matrix:
             os:
-              - ubuntu-latest
-              - windows-latest
-              - macos-latest # Apple Silicon arm64
               - macos-13 # Intel x64
             python-version:
               - "3.10"
@@ -38,6 +35,13 @@ jobs:
         conda config --set conda_build.pkg_format 2
     - name: build
       run: |
+        # remove /Libary/Apple/usr/bin from the PATH on macOS to avoid issues with conda-build
+        if [[ "${{ matrix.os }}" == "macos-13" ]]; then
+          echo "Removing /Library/Apple/usr/bin from PATH"
+          echo "Current PATH: $PATH"
+          export PATH=$(echo $PATH | sed -e 's/:\/Library\/Apple\/usr\/bin:/:/g')
+          echo "New PATH: $PATH"
+        fi
         conda build pydantic-core --python ${{ matrix.python-version }} --output-folder ./output
     - name: List outputs
       run: |

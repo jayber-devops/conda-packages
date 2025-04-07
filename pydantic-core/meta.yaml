@@ -16,7 +16,7 @@ build:
     - export RUSTFLAGS="$CARGO_BUILD_RUSTFLAGS"   # [unix]
     - set CARGO_PROFILE_RELEASE_STRIP=symbols     # [win]
     - {{ PYTHON }} -m pip install . -vv
-  number: {{ environ.get('BUILD_NUMBER', 0) }}
+  number: "10"
 
 requirements:
   build:
