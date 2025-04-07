@@ -50,13 +50,7 @@ about:
   home: https://github.com/pydantic/pydantic-core
   dev_url: https://github.com/pydantic/pydantic-core
   summary: Core validation logic for pydantic written in rust
+  description: This package provides the core functionality for pydantic validation and serialization. Faster than pydantic v1.
   license: MIT
   license_file: LICENSE
 
-extra:
-  recipe-maintainers:
-    - xhochy
-    - samuelcolvin
-    - adriangb
-    - dmontagu
-    - pavelzw
