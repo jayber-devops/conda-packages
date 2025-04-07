@@ -17,7 +17,7 @@ build:
     - set CARGO_PROFILE_RELEASE_STRIP=symbols  # [win]
     - {{ PYTHON }} -m pip install . -vv
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  number: 0
+  number: 10
 
 requirements:
   build:
