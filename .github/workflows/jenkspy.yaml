@@ -1,0 +1,49 @@
+name: pydantic-core
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+        fail-fast: false
+        matrix:
+            os:
+              - ubuntu-latest
+              - windows-latest
+              - macos-latest # Apple Silicon arm64
+              - macos-13 # Intel x64
+            python-version:
+              - "3.11"
+              - "3.12"
+              - "3.13"
+              - "3.14"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+    - name: Setup
+      id: setup-build-environment
+      run: |
+        conda install conda-build conda-verify -y
+        # output .conda packages
+        conda config --set conda_build.pkg_format 2
+    - name: build
+      run: |
+        conda build jenkspy --python ${{ matrix.python-version }} --output-folder ./output
+    - name: List outputs
+      run: |
+        ls -R ./output
+    - uses: actions/upload-artifact@v4
+      with:
+        name: pydantic-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.sha }}
+        path: output/**/*.conda
+        retention-days: 90
