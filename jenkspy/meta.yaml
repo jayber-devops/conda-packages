@@ -12,14 +12,12 @@ source:
 
 build:
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  number: 3
+  number: 0
 
 requirements:
   build:
     - {{ compiler("c") }}
-    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
     - python                                 # [build_platform != target_platform]
-    - {{ stdlib("c") }}
   host:
     - cython
     - pip
@@ -30,6 +28,10 @@ requirements:
     - python
 
 test:
+  requires:
+    - pip
+  commands:
+    - pip check
   imports:
     - jenkspy
 
