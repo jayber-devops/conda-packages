@@ -33,12 +33,12 @@ jobs:
     - name: Setup
       id: setup-build-environment
       run: |
-        conda install conda-build conda-verify -y
+        conda install -c conda-forge conda-build conda-verify -y
         # output .conda packages
         conda config --set conda_build.pkg_format 2
     - name: build
       run: |
-        conda build jenkspy --python ${{ matrix.python-version }} --output-folder ./output
+        conda build jenkspy -c conda-forge --python ${{ matrix.python-version }} --output-folder ./output
     - name: List outputs
       run: |
         ls -R ./output
