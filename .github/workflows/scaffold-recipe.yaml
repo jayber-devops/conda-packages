@@ -1,0 +1,39 @@
+name: Scaffold recipe build config
+
+on:
+  workflow_dispatch:
+    inputs:
+      recipe:
+        description: Conda package recipe name
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Research upstream recipes and scaffold build.yaml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RECIPE: ${{ inputs.recipe }}
+        run: python scripts/scaffold_recipe.py "$RECIPE" --output-dir scaffold
+      - name: Explain how to use the scaffold
+        run: |
+          {
+            echo "Download the generated \`build.yaml\` artifact, review its upstream findings,"
+            echo "and add it beside the recipe's \`meta.yaml\`. A pull request changing"
+            echo "that file will trigger the cross-platform build workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.recipe }}-build-config
+          path: scaffold/**/build.yaml
+          if-no-files-found: error
+          retention-days: 30

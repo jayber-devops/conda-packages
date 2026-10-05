@@ -93,6 +93,13 @@ def research_recipe(name: str, github: GitHub) -> dict[str, RecipeSource | None]
                 sources[key] = source
                 break
 
+    if sources["conda_forge"] is None:
+        for path in (f"recipes/{name}/meta.yaml", f"recipes/{name}/recipe.yaml"):
+            source = github.get_recipe_file("conda-forge", "staged-recipes", path)
+            if source:
+                sources["conda_forge"] = source
+                break
+
     if sources["anaconda_recipes"] is None:
         for path in (f"{name}/meta.yaml", f"{name}/recipe/meta.yaml"):
             source = github.get_recipe_file("ContinuumIO", "anaconda-recipes", path)

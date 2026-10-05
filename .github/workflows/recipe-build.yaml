@@ -1,0 +1,76 @@
+name: Build recipe
+
+on:
+  workflow_dispatch:
+    inputs:
+      recipe:
+        description: Recipe directory to build
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - "**/build.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: matrix
+        name: Discover recipe build matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RECIPE_INPUT: ${{ inputs.recipe }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: ruby scripts/build_matrix.rb
+
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      CHANNELS_JSON: ${{ toJSON(matrix.channels) }}
+      RECIPE_NAME: ${{ matrix.recipe }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+      - name: Set up conda-build
+        run: |
+          conda install -c conda-forge conda-build conda-verify -y
+          conda config --set conda_build.pkg_format 2
+      - name: Build and run recipe tests
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          channels = json.loads(os.environ["CHANNELS_JSON"])
+          command = ["conda", "build", os.environ["RECIPE_NAME"]]
+          for channel in channels:
+              command.extend(["-c", channel])
+          command.extend(["--output-folder", "./output"])
+          subprocess.run(command, check=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.recipe }}-${{ matrix.platform }}-${{ github.sha }}
+          path: output/**/*.conda
+          if-no-files-found: error
+          retention-days: 90
